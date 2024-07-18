@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "GDB Debug",
+      "type": "gdb",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "target": "${workspaceFolder}/build/BugHTTPServer",
+      "stopAtEntry": false,
+      "arguments": "",
+      "valuesFormatting": "prettyPrinters"
+    }
+  ]
+}
