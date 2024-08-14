@@ -11,5 +11,5 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 # Add the executable target
 add_executable(BugHTTPServer http_server.c handlers.c)
 
-#Make debug or release build
-set(CMAKE_BUILD_TYPE Debug)
+# Link the pthread library
+target_link_libraries(BugHTTPServer pthread)

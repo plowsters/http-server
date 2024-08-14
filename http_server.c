@@ -86,92 +86,83 @@ Protocol Examples and Layers
 
 #include "handlers.h"
 
-#define PORT "8080" //Which port to send traffic through
-#define BACKLOG 20 //How many connections can be in queue at once
+#define PORT "8080" // Which port to send traffic through
+#define BACKLOG 20  // How many connections can be in queue at once
 
+void accept_connections(int sockfd);
 
 int main() {
-	int status, sockfd, new_fd; //Variables for status and socket descriptors
-    struct addrinfo hints, *servinfo, *p; //Variables for address info
-    struct sockaddr_storage their_addr; //Connector's address information
-    socklen_t sin_size; //Size of struct sockaddr_storage
-    char s[INET6_ADDRSTRLEN]; //Buffer to hold the client's IP address
-    int yes = 1; //For setsockopt() SO_REUSEADDR
+    int status, sockfd;
+    struct addrinfo hints, *servinfo, *p;
+    int yes = 1;  // For setsockopt() SO_REUSEADDR
 
-    memset(&hints, 0, sizeof hints); //Make sure the struct is empty
-    hints.ai_family = AF_UNSPEC; //Allow for both IPv4 or IPv6 addresses
-    hints.ai_socktype = SOCK_STREAM; //TCP Stream Sockets
-    hints.ai_flags = AI_PASSIVE; //Fill in my IP for me
+    memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = AI_PASSIVE;  // Use my IP
 
-    //Get address info
     if ((status = getaddrinfo(NULL, PORT, &hints, &servinfo)) != 0) {
         fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
         exit(1);
     }
 
-    //Loop through all the results and bind to the first one we can
     for (p = servinfo; p != NULL; p = p->ai_next) {
-        //Create a socket
         if ((sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1) {
             perror("server: socket");
             continue;
         }
-    
-        //Set socket options
-        if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) {
+
+        if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1) {
             perror("setsockopt");
             close(sockfd);
             exit(1);
         }
 
-        //Bind the socket to the port
         if (bind(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
             close(sockfd);
-            perror("server:bind");
+            perror("server: bind");
             continue;
         }
 
         break;
     }
 
-    //Check if we successfully bound to a socket
     if (p == NULL) {
         fprintf(stderr, "server: failed to bind\n");
         return 2;
     }
 
-    //Free the linked list of address info
     freeaddrinfo(servinfo);
 
-    //Listen for incoming connections
-    if(listen(sockfd, BACKLOG) == -1) {
+    if (listen(sockfd, BACKLOG) == -1) {
         perror("listen");
         exit(1);
     }
 
     printf("server: waiting for connections...\n");
 
-    //Main loop to accept and handle connections
+    accept_connections(sockfd);
+
+    return 0;
+}
+
+void accept_connections(int sockfd) {
     while (1) {
-        sin_size = sizeof their_addr; //Size of struct sockaddr_storage
-        new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size);
-        if (new_fd == -1) {
+        struct sockaddr_storage their_addr;
+        socklen_t sin_size = sizeof their_addr;
+        int *new_fd = malloc(sizeof(int));
+        if ((*new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size)) == -1) {
             perror("accept");
+            free(new_fd);
             continue;
         }
 
-        //Convert the addr to a string and print it
-        inet_ntop(their_addr.ss_family, get_in_addr((struct sockaddr *)&their_addr), s, sizeof s);
-        printf("server: got connection from %s\n", s);
-
-        //Handle the HTTP request in a child process
-        if (!fork()) {
-            close(sockfd); //Child doesn't need listener
-            handle_http_request(new_fd); //Defined in headers.h
-            exit(0);
+        pthread_t thread;
+        if (pthread_create(&thread, NULL, threaded_handle_request, new_fd) != 0) {
+            perror("pthread_create");
+            free(new_fd);
+            continue;
         }
-        close(new_fd); //Parent doesn't need listener
+        pthread_detach(thread);
     }
-    
-    return 0;
 }
