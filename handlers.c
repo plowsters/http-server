@@ -38,7 +38,9 @@ void handle_http_request(int client_fd) {
             "HTTP/1.1 405 Method Not Allowed\r\n"
             "Content-Length: 0\r\n"
             "\r\n";
-        send(client_fd, response, strlen(response), 0);
+        if (send_all(client_fd, response, strlen(response)) == -1) {
+            perror("send error");
+        }
         close(client_fd);
         return;
     }
@@ -67,7 +69,9 @@ void handle_http_request(int client_fd) {
             "HTTP/1.1 403 Forbidden\r\n"
             "Content-Length: 0\r\n"
             "\r\n";
-        send(client_fd, response, strlen(response), 0);
+        if (send_all(client_fd, response, strlen(response)) == -1) {
+            perror("send error");
+        }
         close(client_fd);
         return;
     }
@@ -79,7 +83,9 @@ void handle_http_request(int client_fd) {
             "HTTP/1.1 404 Not Found\r\n"
             "Content-Length: 0\r\n"
             "\r\n";
-        send(client_fd, response, strlen(response), 0);
+        if (send_all(client_fd, response, strlen(response)) == -1) {
+            perror("send error");
+        }
         close(client_fd);
         return;
     }
@@ -91,7 +97,9 @@ void handle_http_request(int client_fd) {
             "HTTP/1.1 500 Internal Server Error\r\n"
             "Content-Length: 0\r\n"
             "\r\n";
-        send(client_fd, response, strlen(response), 0);
+        if (send_all(client_fd, response, strlen(response)) == -1) {
+            perror("send error");
+        }
         close(client_fd);
         return;
     }
@@ -130,12 +138,17 @@ void handle_http_request(int client_fd) {
         "\r\n",
         http_version, date_header, content_type, file_stat.st_size);
 
-    send(client_fd, response_headers, strlen(response_headers), 0);
+    if (send_all(client_fd, response_headers, strlen(response_headers)) == -1) {
+        perror("send error");
+        fclose(file);
+        close(client_fd);
+        return;
+    }
 
     // Step 11: Send the file content in chunks
     size_t bytes_read;
     while ((bytes_read = fread(buffer, 1, BUFFER_SIZE, file)) > 0) {
-        if (send(client_fd, buffer, bytes_read, 0) == -1) {
+        if (send_all(client_fd, buffer, bytes_read) == -1) {
             perror("send error");
             break;
         }
@@ -153,4 +166,20 @@ void *threaded_handle_request(void *client_fd_ptr) {
     close(client_fd);
     free(client_fd_ptr);
     return NULL;
+}
+
+// Helper function to send all data (handling partial sends)
+int send_all(int sockfd, const char *buffer, size_t len) {
+    size_t total_sent = 0;  // How many bytes we've sent
+    ssize_t bytes_sent;
+
+    while (total_sent < len) {
+        bytes_sent = send(sockfd, buffer + total_sent, len - total_sent, 0);
+        if (bytes_sent == -1) {
+            return -1;  // Error occurred
+        }
+        total_sent += bytes_sent;
+    }
+
+    return 0;  // Success
 }

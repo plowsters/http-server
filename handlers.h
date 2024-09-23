@@ -12,6 +12,7 @@
 #include <pthread.h>
 #include <time.h>
 #include <sys/stat.h>
+#include <signal.h>
 
 #define BUFFER_SIZE 1024
 
@@ -23,5 +24,8 @@ void handle_http_request(int client_fd);
 
 // Thread function to handle requests
 void *threaded_handle_request(void *client_fd_ptr);
+
+//Declaration of send_all function
+int send_all(int sockfd, const char *buffer, size_t len);
 
 #endif

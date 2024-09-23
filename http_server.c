@@ -96,6 +96,8 @@ int main() {
     struct addrinfo hints, *servinfo, *p;
     int yes = 1;  // For setsockopt() SO_REUSEADDR
 
+    signal(SIGPIPE, SIG_IGN);
+
     memset(&hints, 0, sizeof hints);
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
