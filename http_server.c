@@ -47,7 +47,7 @@ OSI Model Layers Overview
 
     Presentation Layer (Layer 6)
         Function: Translates data formats between the application and the network.
-        Examples: SSL/TLS, JPEG, GIF
+        Example	s: SSL/TLS, JPEG, GIF
         Role in Protocol Interaction: Encrypts, compresses, and translates data.
 
     Application Layer (Layer 7)
