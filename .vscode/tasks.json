@@ -19,7 +19,10 @@
       "problemMatcher": [
         {
           "owner": "cpp",
-          "fileLocation": ["relative", "${workspaceFolder}"],
+          "fileLocation": [
+            "relative",
+            "${workspaceFolder}"
+          ],
           "pattern": {
             "regexp": "^(.*?):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
             "file": 1,
@@ -47,7 +50,10 @@
       "problemMatcher": [
         {
           "owner": "cpp",
-          "fileLocation": ["relative", "${workspaceFolder}"],
+          "fileLocation": [
+            "relative",
+            "${workspaceFolder}"
+          ],
           "pattern": {
             "regexp": "^(.*?):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
             "file": 1,
