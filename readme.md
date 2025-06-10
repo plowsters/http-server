@@ -6,7 +6,7 @@ This server uses socket functions that will only compile on Linux and BSD varian
 - Content-Type Header
 - Content-Length Header
 
-And is compatible with these filetypes:
+And is compatible with these MIME types:
 
 - text/html
 - text/css
