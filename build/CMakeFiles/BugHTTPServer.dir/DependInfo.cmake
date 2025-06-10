@@ -10,6 +10,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/archbug/projects/http-server/handlers.c" "CMakeFiles/BugHTTPServer.dir/handlers.c.o" "gcc" "CMakeFiles/BugHTTPServer.dir/handlers.c.o.d"
   "/home/archbug/projects/http-server/http_server.c" "CMakeFiles/BugHTTPServer.dir/http_server.c.o" "gcc" "CMakeFiles/BugHTTPServer.dir/http_server.c.o.d"
+  "" "BugHTTPServer" "gcc" "CMakeFiles/BugHTTPServer.dir/link.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

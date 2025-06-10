@@ -1,4 +1,5 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/BugHTTPServer.dir/link.d"
   "BugHTTPServer"
   "BugHTTPServer.pdb"
   "CMakeFiles/BugHTTPServer.dir/handlers.c.o"

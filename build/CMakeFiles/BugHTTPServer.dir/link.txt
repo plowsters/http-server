@@ -1,1 +1,1 @@
-/usr/bin/cc -g CMakeFiles/BugHTTPServer.dir/http_server.c.o CMakeFiles/BugHTTPServer.dir/handlers.c.o -o BugHTTPServer  -lpthread
+/usr/bin/cc -g -Wl,--dependency-file=CMakeFiles/BugHTTPServer.dir/link.d CMakeFiles/BugHTTPServer.dir/http_server.c.o CMakeFiles/BugHTTPServer.dir/handlers.c.o -o BugHTTPServer  -lpthread

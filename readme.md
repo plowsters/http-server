@@ -1,5 +1,5 @@
 # Getting Started
-This server uses socket functions that will only compile on Linux (may possibly compile on BSD variants or other UNIX-like operating systems).This server is not compliant with the HTTP Protocol as it does not implement all of the required headers, security features, or any caching whatsoever. It is for educational purposes only. It currently implements from HTTP/1.1:
+This server uses socket functions that will only compile on Linux and BSD variants (potentially compiles on other UNIX-like operating systems).This server is not compliant with the HTTP Protocol as it does not implement all of the required headers, security features, or any caching whatsoever. It is for educational purposes only. It currently implements from HTTP/1.1:
 
 - Status Line
 - Date Header
